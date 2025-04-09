@@ -5,6 +5,7 @@ import time
 import os
 import csv
 import json
+import re
 
 # %% [markdown]
 # ## Tarefa 1
@@ -29,7 +30,6 @@ def coletar_links(url, limite):
             # Verifica se esse link já foi acessado. Se não, continua a execução e adiciona a lista de visitados.
             if atual in visitados: 
                 continue
-            visitados.add(atual)
 
             # Carrega a página atual.
             req = requests.get(atual)
@@ -41,7 +41,8 @@ def coletar_links(url, limite):
             with open(f"pages/{nome_arquivo}.html", "w", encoding="utf-8") as file:
                 conteudo = req.content.decode("utf-8")
                 file.write(conteudo)
-            salvos += 1
+                visitados.add(atual)
+                salvos += 1
 
             # Itera sobre todos os links da página atual.
             for link in soup.find_all('a', href=True):
@@ -57,7 +58,7 @@ def coletar_links(url, limite):
                     # Adiciona todos que forem verbetes à fila. O último link coletado será a próxima página a ser aberta.
                     fila.append('https://pt.wikipedia.org' + pagina)
 
-            print(salvos, end="\r")
+            print(f"{salvos} - {salvos-len(os.listdir("pages/"))}", end="\r")
             # time.sleep(0.6)
 
         # Evita páginas sem título (titulo[0].text)
@@ -137,5 +138,3 @@ for link in links:
     create_json(link)
     print(i, end="\r")
     i+=1
-
-
