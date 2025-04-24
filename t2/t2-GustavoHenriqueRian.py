@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 import json
 import time
 import os
-
+import re
 
 driver = webdriver.Chrome()
 driver.get("https://www.imdb.com")
@@ -64,7 +64,7 @@ for serie in series_list:
 os.makedirs("json", exist_ok=True)
 for serie in series_list:
     try:
-        with open(f"json/{serie.get('titulo').split(':')[0]}.json", "w", encoding="utf-8") as arquivo:
+        with open(f"json/{re.sub('[^A-Za-z0-9]+', '', serie.get('titulo'))}.json", "w", encoding="utf-8") as arquivo:
             json.dump(serie, arquivo, ensure_ascii=False, indent=4)
     except FileNotFoundError as e:
         print(e)
