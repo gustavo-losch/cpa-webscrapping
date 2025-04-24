@@ -4,7 +4,7 @@ import json
 import time
 import os
 
-# 
+
 driver = webdriver.Chrome()
 driver.get("https://www.imdb.com")
 driver.maximize_window()
@@ -25,6 +25,7 @@ i=0
 for serie in lista_series:
     i+=1
     print(f"{i}/{len(series_list)}", end="\r")
+
     titulo = str(serie.find_element(By.CLASS_NAME, "ipc-title__text").text.split(".", 1)[-1]).strip()
     link = serie.find_element(By.CLASS_NAME, "ipc-title-link-wrapper").get_attribute('href')
     ano = serie.find_element(By.XPATH, r'./div/div/div/div/div[2]/div[2]/span[1]').text
@@ -57,12 +58,16 @@ for serie in series_list:
         personagens = [personagem.find_elements(By.CSS_SELECTOR, "[data-testid='cast-item-characters-link']")[0].text for personagem in lista_elenco]
         serie["personagens"] = personagens
     except:
-        print("Ator ou personagem vazio.")
+        print(f"Ator ou personagem vazio. {serie.get('titulo')}")
         continue
 
 os.makedirs("json", exist_ok=True)
 for serie in series_list:
-    with open(f"json/{serie.get('titulo').split(':')[0]}.json", "w", encoding="utf-8") as arquivo:
-        json.dump(serie, arquivo, ensure_ascii=False, indent=4)
+    try:
+        with open(f"json/{serie.get('titulo').split(':')[0]}.json", "w", encoding="utf-8") as arquivo:
+            json.dump(serie, arquivo, ensure_ascii=False, indent=4)
+    except FileNotFoundError as e:
+        print(e)
+        continue
 
 driver.quit()
