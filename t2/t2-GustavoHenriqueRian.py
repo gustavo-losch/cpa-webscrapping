@@ -5,7 +5,7 @@ import time
 import os
 import re
 
-driver = webdriver.Chrome()
+driver = webdriver.Firefox()
 driver.get("https://www.imdb.com")
 driver.maximize_window()
 
